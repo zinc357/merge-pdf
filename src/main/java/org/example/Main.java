@@ -21,48 +21,44 @@ public class Main {
 
         FileUtils fileUtils = new FileUtils();
 
+        // 创建空pdf文件
+        PDDocument document = new PDDocument();
+        PDPage blankPage = new PDPage();
+        document.addPage(blankPage);
+        document.save("result.pdf");
+
         // 获取pdf文件流
         final InputStream resourcesFile1 = fileUtils.getResourcesFile("1.pdf");
+        final PDDocument document1 = PDDocument.load(resourcesFile1);
+        final int p1 = document1.getNumberOfPages();
         final InputStream resourcesFile2 = fileUtils.getResourcesFile("2.pdf");
+        final PDDocument document2 = PDDocument.load(resourcesFile2);
+        final int p2 = document2.getNumberOfPages();
 
         // 按顺序添加需要合并的pdf文件
-        mergerUtility.addSource(resourcesFile1);
-        mergerUtility.addSource(resourcesFile2);
+        mergerUtility.appendDocument(document, document1);
+        mergerUtility.appendDocument(document, document2);
 
         mergerUtility.setDestinationFileName("result.pdf");
 
         // 合并pdf文件
         mergerUtility.mergeDocuments(null);
 
+        resourcesFile1.close();
+        resourcesFile2.close();
+        document1.close();
+        document2.close();
 
-        createBookMark();
 
-    }
-
-    /**
-     * 添加书签
-     * Example代码 https://svn.apache.org/viewvc/pdfbox/trunk/examples/src/main/java/org/apache/pdfbox/examples/pdmodel/CreateBookmarks.java?revision=1873147&view=markup
-     * @throws IOException
-     */
-    public static void createBookMark() throws IOException {
-        FileUtils fileUtils = new FileUtils();
-        // 获取pdf文件页数
-        final InputStream resourcesFile1 = fileUtils.getResourcesFile("1.pdf");
-        final PDDocument d1 = PDDocument.load(resourcesFile1);
-        final int p1 = d1.getNumberOfPages();
-
-        final InputStream resourcesFile2 = fileUtils.getResourcesFile("2.pdf");
-        final PDDocument d2 = PDDocument.load(resourcesFile2);
-        final int p2 = d2.getNumberOfPages();
-
-        // 按顺序将每个pdf的页码总数添加到集合中
         ArrayList<Integer> pageList = new ArrayList<>();
         pageList.add(p1);
         pageList.add(p2);
 
-        // 读取已合并完成的pdf文件
-        final PDDocument document = PDDocument.load(new File("result.pdf"));
+        createBookMark(document, pageList);
 
+    }
+
+    private static void createBookMark(PDDocument document, ArrayList<Integer> pageList) throws IOException {
         // 添加书签
         PDDocumentOutline outline = new PDDocumentOutline();
         document.getDocumentCatalog().setDocumentOutline(outline);
