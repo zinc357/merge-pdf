@@ -20,7 +20,7 @@ public class PDFUtils {
      * 合并pdf
      *
      * @param pdfList PDFFile集合 [{"base64": "", "bookmark": ""}, ...]
-     * @return ByteArrayOutputStream
+     * @return 合并后的base64
      */
     public static String mergePDF(ArrayList<PDFFile> pdfList) {
         // pdfbox工具类
