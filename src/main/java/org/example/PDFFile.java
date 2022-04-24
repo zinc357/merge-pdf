@@ -11,6 +11,13 @@ public class PDFFile {
      */
     private String bookmark;
 
+    public PDFFile() {
+    }
+
+    public PDFFile(String base64, String bookmark) {
+        this.base64 = base64;
+        this.bookmark = bookmark;
+    }
 
     public String getBase64() {
         return base64;
