@@ -9,10 +9,10 @@ import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPa
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 
-import java.io.*;
-import java.nio.file.Files;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.UUID;
 
 public class PDFUtils {
 
@@ -21,7 +21,7 @@ public class PDFUtils {
      *
      * @param pdfList      pdf文件流
      * @param bookmarkList pdf文件对应的书签列表 pdfList与bookmarkList长度需一致
-     * @return
+     * @return ByteArrayOutputStream
      */
     public static ByteArrayOutputStream mergePDF(ArrayList<InputStream> pdfList, ArrayList<String> bookmarkList) {
         if (pdfList.size() != bookmarkList.size()) {
