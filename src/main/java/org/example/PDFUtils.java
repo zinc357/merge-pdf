@@ -11,23 +11,18 @@ import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDOutlin
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Base64;
 
 public class PDFUtils {
 
     /**
      * 合并pdf
      *
-     * @param pdfList      pdf文件流
-     * @param bookmarkList pdf文件对应的书签列表 pdfList与bookmarkList长度需一致
+     * @param pdfList pdf
      * @return ByteArrayOutputStream
      */
-    public static ByteArrayOutputStream mergePDF(ArrayList<InputStream> pdfList, ArrayList<String> bookmarkList) {
-        if (pdfList.size() != bookmarkList.size()) {
-            throw new RuntimeException("pdf文件对应的书签列表 pdfList与bookmarkList长度不一致!!!");
-        }
-
+    public static String mergePDF(ArrayList<PDFFile> pdfList) {
         // pdfbox工具类
         PDFMergerUtility mergerUtility = new PDFMergerUtility();
 
@@ -36,15 +31,17 @@ public class PDFUtils {
 
             ArrayList<PDDocument> docsList = new ArrayList<>();
             ArrayList<Integer> pagesList = new ArrayList<>();
+            ArrayList<String> bookmarkList = new ArrayList<>();
 
-            for (InputStream pdfStream : pdfList) {
+            for (PDFFile pdf : pdfList) {
                 // 文件流转document
-                final PDDocument d = PDDocument.load(pdfStream);
+                final PDDocument d = PDDocument.load(Base64.getDecoder().decode(pdf.getBase64()));
                 // 获取pdf文件的页数
                 final int numberOfPages = d.getNumberOfPages();
 
                 docsList.add(d);
                 pagesList.add(numberOfPages);
+                bookmarkList.add(pdf.getBookmark());
             }
 
             for (PDDocument pdDocument : docsList) {
@@ -65,8 +62,9 @@ public class PDFUtils {
             for (PDDocument pdDocument : docsList) {
                 pdDocument.close();
             }
-
-            return output;
+            final byte[] bytes = output.toByteArray();
+            final String base64 = Base64.getEncoder().encodeToString(bytes);
+            return base64;
 
         } catch (IOException e) {
             e.printStackTrace();
