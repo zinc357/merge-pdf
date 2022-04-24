@@ -63,8 +63,7 @@ public class PDFUtils {
                 pdDocument.close();
             }
             final byte[] bytes = output.toByteArray();
-            final String base64 = Base64.getEncoder().encodeToString(bytes);
-            return base64;
+            return Base64.getEncoder().encodeToString(bytes);
 
         } catch (IOException e) {
             e.printStackTrace();
